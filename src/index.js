@@ -47,10 +47,10 @@ var process = function (input, callback) {
         return callback(error)
       }
 
-      return {
+      return callback(null, {
         keyphrases: pullKeyphrases(file),
         keywords: pullKeywords(file)
-      }
+      })
     })
   })
 }
