@@ -1,6 +1,6 @@
 {
   "name": "produce-package-keywords",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Produces keywords for a package by analyzing its package.json, readme and/or given file's text",
   "main": "src/index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "prepublish": "npm t && npm run clean",
     "pregit": "npm t && npm run clean",
     "git": "git commit -a -m",
+    "postgit": "git push github master",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
