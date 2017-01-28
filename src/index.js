@@ -47,17 +47,24 @@ var process = function (input, callback) {
         return callback(error)
       }
 
-      return callback(null, {
+      var returns = {
         keyphrases: pullKeyphrases(file),
         keywords: pullKeywords(file)
-      })
+      }
+
+      if (returns.keyphrases.length === 0) {
+        returns.keyphrases = input
+      }
+
+      if (returns.keywords.length === 0) {
+        returns.keywords = input
+      }
+
+      return callback(null, returns)
     })
   })
 }
 
 module.exports = {
-  stringFromFile: stringFromFile,
-  pullKeyphrases: pullKeyphrases,
-  pullKeywords: pullKeywords,
   process: process
 }
