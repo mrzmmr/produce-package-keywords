@@ -1,6 +1,6 @@
 {
   "name": "produce-package-keywords",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "Produces keywords for a package by analyzing its package.json, readme and/or given file's text",
   "main": "src/index.js",
   "scripts": {

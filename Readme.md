@@ -26,9 +26,24 @@ npm install produce-package-keywords --save
 
 ## Usage
 
-```
+```js
+const packageKeywords = require('produce-package-keywords')
+
 ```
 
+Then you can pass the function a path to a file, or a string.
+
+```js
+const input = 'path/to/file.txt' // or string
+
+producePackageKeywords(input, (error, result) => {
+  if (error) {
+    console.error(error)
+  }
+  console.log(result)
+})
+```
+  
 ## Tests
 
 ```sh
