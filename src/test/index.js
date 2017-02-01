@@ -88,97 +88,65 @@ tape('Should return array of keyphrases | test.txt2', (test) => {
 })
 
 tape('Should return object | From string | test.txt1', (test) => {
-  return packageKeywords.process(testtxt1string, (err, result) => {
-    if (err) {
-      test.fail(err)
-    }
-
+  return packageKeywords.process(testtxt1string).then((result) => {
     test.ok(typeof result === 'object')
     test.deepEqual(result, expected)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return object | From path | test.txt1', (test) => {
-  return packageKeywords.process(testtxt1, (err, result) => {
-    if (err) {
-      test.fail(err)
-    }
-
+  return packageKeywords.process(testtxt1).then((result) => {
     test.ok(typeof result === 'object')
     test.deepEqual(result, expected)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return object | From string | test.txt2', (test) => {
-  return packageKeywords.process(testtxt2string, (err, result) => {
-    if (err) {
-      test.fail(err)
-    }
-
+  return packageKeywords.process(testtxt2string).then((result) => {
     test.ok(typeof result === 'object')
     test.deepEqual(result, expected2)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return object | From path | test.txt2', (test) => {
-  return packageKeywords.process(testtxt2, (err, result) => {
-    if (err) {
-      test.fail(err)
-    }
-
+  return packageKeywords.process(testtxt2).then((result) => {
     test.ok(typeof result === 'object')
     test.deepEqual(result, expected2)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return string | From file | testtxt1', (test) => {
-  return packageKeywords.stringFromFile(testtxt1, (err, result) => {
-    if (err) {
-      return test.fail(err)
-    }
-
+  return packageKeywords.stringFromFile(testtxt1).then((result) => {
     test.ok(typeof result === 'string')
     test.equal(result, testtxt1string)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return string | From string | testtxt1', (test) => {
-  return packageKeywords.stringFromFile(testtxt1string, (err, result) => {
-    if (err) {
-      return test.fail(err)
-    }
-
+  return packageKeywords.stringFromFile(testtxt1string).then((result) => {
     test.ok(typeof result === 'string')
     test.equal(result, testtxt1string)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return string | From file | testtxt2', (test) => {
-  return packageKeywords.stringFromFile(testtxt2, (err, result) => {
-    if (err) {
-      return test.fail(err)
-    }
-
+  return packageKeywords.stringFromFile(testtxt2).then((result) => {
     test.ok(typeof result === 'string')
     test.equal(result, testtxt2string)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })
 
 tape('Should return string | From string | testtxt2', (test) => {
-  return packageKeywords.stringFromFile(testtxt2string, (err, result) => {
-    if (err) {
-      return test.fail(err)
-    }
-
+  return packageKeywords.stringFromFile(testtxt2string).then((result) => {
     test.ok(typeof result === 'string')
     test.equal(result, testtxt2string)
     test.end()
-  })
+  }).catch((err) => test.fail(err))
 })

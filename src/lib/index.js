@@ -1,26 +1,25 @@
 'use strict'
 
-/*
- * Dependencies
- */
-
 import {default as retextKeywords} from 'retext-keywords'
 import {default as nlcstToString} from 'nlcst-to-string'
+// import {default as readPkgUp} from 'read-pkg-up'
 import {default as exists} from 'fs-exists-sync'
 import {default as retext} from 'retext'
 import {default as fs} from 'fs'
 
-export const stringFromFile = (input, callback) => {
-  if (!exists(input)) {
-    return callback(null, input)
-  }
-
-  return fs.readFile(input, 'utf-8', (error, string) => {
-    if (error) {
-      return callback(error)
+export const stringFromFile = (input) => {
+  return new Promise((resolve, reject) => {
+    if (!exists(input)) {
+      return resolve(input)
     }
 
-    return callback(null, string)
+    return fs.readFile(input, 'utf-8', (err, string) => {
+      if (err) {
+        return reject(err)
+      }
+
+      return resolve(string)
+    })
   })
 }
 
@@ -36,31 +35,31 @@ export const pullKeywords = (file) => {
   })
 }
 
-export const process = function (input, callback) {
-  return stringFromFile(input, function (error, string) {
-    if (error) {
-      return callback(error)
-    }
+export const process = (input) => {
+  return new Promise((resolve, reject) => {
+    return stringFromFile(input).then((string) => {
+      return retext().use(retextKeywords).process(string, (err, file) => {
+        if (err) {
+          return reject(err)
+        }
 
-    return retext().use(retextKeywords).process(string, function (error, file) {
-      if (error) {
-        return callback(error)
-      }
+        const returns = {
+          keyphrases: pullKeyphrases(file),
+          keywords: pullKeywords(file)
+        }
 
-      const returns = {
-        keyphrases: pullKeyphrases(file),
-        keywords: pullKeywords(file)
-      }
+        if (returns.keyphrases.length === 0) {
+          returns.keyphrases = [string]
+        }
 
-      if (returns.keyphrases.length === 0) {
-        returns.keyphrases = [string]
-      }
+        if (returns.keywords.length === 0) {
+          returns.keywords = [string]
+        }
 
-      if (returns.keywords.length === 0) {
-        returns.keywords = [string]
-      }
-
-      return callback(null, returns)
+        return resolve(returns)
+      })
+    }).catch((err) => {
+      return reject(err)
     })
   })
 }
