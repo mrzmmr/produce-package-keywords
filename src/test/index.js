@@ -155,17 +155,16 @@ tape('Should fail from file | fromFile | callback', (t) => {
   })
 })
 
+/*
+ * TODO: Bad work around :/. t.throws doesnt catch the error from fs.readFile.
+ * The error bubbles out of the callback function.
+ */
 tape('Should fail from file | fromFile | callback', (t) => {
   t.plan(1)
-  t.throws(() => {
-    return ppk.fromFile('./foo', (error, result) => {
-      if (error) {
-        throw error
-      }
-    })
+  return ppk.fromFile('./foo', (error, result) => {
+    t.ok(error)
   })
 })
- 
 
  /*
  * Promise api

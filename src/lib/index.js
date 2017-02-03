@@ -38,10 +38,6 @@ const extract = module.exports.extract = (input) => {
 }
 
 const fromFile = module.exports.fromFile = (file, callback) => {
-  const error = fs.accessSync(file)
-  if (error) {
-    return callback(error)
-  }
   return fs.readFile(file, (error, string) => {
     if (error) {
       return callback(error)
@@ -56,14 +52,11 @@ const fromPackageJson = module.exports.fromPackageJson = (callback) => {
     let name = json.pkg.name
     let result = []
 
+    result = extract(name)
+
     if (description) {
       description = extract(description)
-      result = merge(result, description)
-    }
-
-    if (name) {
-      name = extract(name)
-      result = merge(result, name)
+      result = merge(description, result)
     }
 
     return callback(null, result)
