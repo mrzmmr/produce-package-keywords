@@ -1,6 +1,7 @@
 #! usr/bin/env node
 
-import * as producePackageKeywords from './lib'
+const ppk = require('./lib')
 
-export default producePackageKeywords.process
-
+module.exports = ppk.process
+module.exports.process = ppk.process
+module.exports.fromFile = ppk.fromFile
