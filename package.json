@@ -1,7 +1,7 @@
 {
   "name": "produce-package-keywords",
-  "version": "1.2.0",
-  "description": "Produces keywords for a package by analyzing its package.json, readme and/or given file's text",
+  "version": "1.3.0",
+  "description": "Produces keywords for your node.js package so that users can better find your package on npm",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint --fix src/lib/*.js",
@@ -46,25 +46,25 @@
     "plugins": [
       "standard",
       "promise"
-    ]
+    ],
+    "rules": {
+      "no-unused-vars": [2, {
+        "varsIgnorePattern": "fromFile|fromPackageJson|process"
+      }]
+    }
   },
   "devDependencies": {
     "babel-cli": "^6.22.2",
     "babel-preset-latest": "^6.22.0",
-    "chalk": "^1.1.3",
     "codecov": "^1.0.1",
-    "eslint": "^3.14.0",
-    "eslint-config-standard": "^6.2.1",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
     "nyc": "^10.1.2",
     "rimraf": "^2.5.4",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.3"
   },
   "dependencies": {
-    "fs-exists-sync": "^0.1.0",
     "nlcst-to-string": "^2.0.0",
+    "read-pkg-up": "^2.0.0",
     "retext": "^4.0.0",
     "retext-keywords": "^3.1.0"
   }

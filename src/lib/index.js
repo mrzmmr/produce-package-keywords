@@ -1,67 +1,85 @@
 'use strict'
 
-import {default as retextKeywords} from 'retext-keywords'
-import {default as nlcstToString} from 'nlcst-to-string'
-// import {default as readPkgUp} from 'read-pkg-up'
-import {default as exists} from 'fs-exists-sync'
-import {default as retext} from 'retext'
-import {default as fs} from 'fs'
+const retextKeywords = require('retext-keywords')
+const nlcstToString = require('nlcst-to-string')
+const readPkgUp = require('read-pkg-up')
+const Retext = require('retext')
+const fs = require('fs')
 
-export const stringFromFile = (input) => {
-  return new Promise((resolve, reject) => {
-    if (!exists(input)) {
-      return resolve(input)
-    }
+const retext = Retext()
 
-    return fs.readFile(input, 'utf-8', (err, string) => {
-      if (err) {
-        return reject(err)
-      }
-
-      return resolve(string)
-    })
-  })
+const formatString = module.exports.formatString = (string) => {
+  return string.toLowerCase().replace(/[^\w\s|-]/g, '').split(' ').join('-')
 }
 
-export const pullKeyphrases = (file) => {
-  return file.data.keyphrases.map((phrase) => {
-    return phrase.matches[0].nodes.map(nlcstToString).join('')
-  })
+const merge = module.exports.merge = (first, second) => {
+  return first.concat(second.filter((node) => {
+    return first.indexOf(node) < 0
+  }))
 }
 
-export const pullKeywords = (file) => {
-  return file.data.keywords.map(keyword => {
+const getKeyphrases = module.exports.getKeyphrases = (file) => {
+  return file.data.keyphrases.map((keyphrase) => {
+    return keyphrase.matches[0].nodes.map(nlcstToString).join('')
+  })
+  .map(formatString)
+}
+
+const getKeywords = module.exports.getKeywords = (file) => {
+  return file.data.keywords.map((keyword) => {
     return nlcstToString(keyword.matches[0].node)
   })
+  .map(formatString)
 }
 
-export const process = (input) => {
-  return new Promise((resolve, reject) => {
-    return stringFromFile(input).then((string) => {
-      return retext().use(retextKeywords).process(string, (err, file) => {
-        if (err) {
-          return reject(err)
-        }
+const extract = module.exports.extract = (input) => {
+  const file = retext.use(retextKeywords).process(input)
+  return merge(getKeyphrases(file), getKeywords(file))
+}
 
-        const returns = {
-          keyphrases: pullKeyphrases(file),
-          keywords: pullKeywords(file)
-        }
-
-        if (returns.keyphrases.length === 0) {
-          returns.keyphrases = [string]
-        }
-
-        if (returns.keywords.length === 0) {
-          returns.keywords = [string]
-        }
-
-        return resolve(returns)
-      })
-    }).catch((err) => {
-      return reject(err)
-    })
+const fromFile = module.exports.fromFile = (file, callback) => {
+  const error = fs.accessSync(file)
+  if (error) {
+    return callback(error)
+  }
+  return fs.readFile(file, (error, string) => {
+    if (error) {
+      return callback(error)
+    }
+    return callback(null, extract(string))
   })
 }
 
-export default process
+const fromPackageJson = module.exports.fromPackageJson = (callback) => {
+  return readPkgUp().then((json) => {
+    let description = json.pkg.description
+    let name = json.pkg.name
+    let result = []
+
+    if (description) {
+      description = extract(description)
+      result = merge(result, description)
+    }
+
+    if (name) {
+      name = extract(name)
+      result = merge(result, name)
+    }
+
+    return callback(null, result)
+  })
+  .catch((error) => callback(error))
+}
+
+const process = module.exports.process = (string, callback) => {
+  if (typeof string === 'function') {
+    callback = string
+    string = null
+  }
+
+  if (string) {
+    return callback(null, extract(string))
+  }
+
+  return fromPackageJson(callback)
+}
