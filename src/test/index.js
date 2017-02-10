@@ -165,7 +165,3 @@ tape('Should fail from file | fromFile | callback', (t) => {
     t.ok(error)
   })
 })
-
- /*
- * Promise api
- */
