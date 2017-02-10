@@ -3,41 +3,39 @@
 const retextKeywords = require('retext-keywords')
 const nlcstToString = require('nlcst-to-string')
 const readPkgUp = require('read-pkg-up')
-const Retext = require('retext')
+const retext = require('retext')
 const fs = require('fs')
 
-const retext = Retext()
-
-const formatString = module.exports.formatString = (string) => {
+const formatString = (string) => {
   return string.toLowerCase().replace(/[^\w\s|-]/g, '').split(' ').join('-')
 }
 
-const merge = module.exports.merge = (first, second) => {
+const merge = (first, second) => {
   return first.concat(second.filter((node) => {
     return first.indexOf(node) < 0
   }))
 }
 
-const getKeyphrases = module.exports.getKeyphrases = (file) => {
+const getKeyphrases = (file) => {
   return file.data.keyphrases.map((keyphrase) => {
     return keyphrase.matches[0].nodes.map(nlcstToString).join('')
   })
   .map(formatString)
 }
 
-const getKeywords = module.exports.getKeywords = (file) => {
+const getKeywords = (file) => {
   return file.data.keywords.map((keyword) => {
     return nlcstToString(keyword.matches[0].node)
   })
   .map(formatString)
 }
 
-const extract = module.exports.extract = (input) => {
-  const file = retext.use(retextKeywords).process(input)
+const extract = (input) => {
+  const file = retext().use(retextKeywords).process(input)
   return merge(getKeyphrases(file), getKeywords(file))
 }
 
-const fromFile = module.exports.fromFile = (file, callback) => {
+const fromFile = (file, callback) => {
   return fs.readFile(file, (error, string) => {
     if (error) {
       return callback(error)
@@ -46,7 +44,7 @@ const fromFile = module.exports.fromFile = (file, callback) => {
   })
 }
 
-const fromPackageJson = module.exports.fromPackageJson = (callback) => {
+const fromPackageJson = (callback) => {
   return readPkgUp().then((json) => {
     let description = json.pkg.description
     let name = json.pkg.name
@@ -64,7 +62,7 @@ const fromPackageJson = module.exports.fromPackageJson = (callback) => {
   .catch((error) => callback(error))
 }
 
-const process = module.exports.process = (string, callback) => {
+const process = (string, callback) => {
   if (typeof string === 'function') {
     callback = string
     string = null
@@ -75,4 +73,15 @@ const process = module.exports.process = (string, callback) => {
   }
 
   return fromPackageJson(callback)
+}
+
+module.exports = {
+  formatString,
+  merge,
+  getKeyphrases,
+  getKeywords,
+  extract,
+  fromFile,
+  fromPackageJson,
+  process
 }
