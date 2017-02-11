@@ -4,18 +4,14 @@
   "description": "Produces keywords for your node.js package so that users can better find your package on npm",
   "main": "src/index.js",
   "scripts": {
-    "lint": "xo --space --fix",
-    "prebabel": "npm run lint",
-    "babel": "babel src -d . -D",
     "tape": "tape test/*.js | tap-spec",
-    "pretest": "npm run babel",
     "test": "nyc npm run tape",
     "posttest": "npm run coverage",
-    "prepublish": "npm t && npm run clean && npm run babel",
+    "prepublish": "npm t && npm run clean",
     "pregit": "npm t && npm run clean",
     "git": "git commit -a -m",
     "postgit": "git push github master",
-    "clean": "rimraf lib index.js test coverage .nyc_output coverage.lcov",
+    "clean": "rimraf coverage .nyc_output coverage.lcov",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "repository": {
@@ -36,20 +32,12 @@
     "url": "https://github.com/mrzmmr/produce-package-keywords/issues"
   },
   "homepage": "https://github.com/mrzmmr/produce-package-keywords#readme",
-  "babel": {
-    "presets": [
-      "env"
-    ]
-  },
   "devDependencies": {
-    "babel-cli": "^6.22.2",
-    "babel-preset-env": "^1.1.8",
     "codecov": "^1.0.1",
     "nyc": "^10.1.2",
     "rimraf": "^2.5.4",
     "tap-spec": "^4.1.1",
-    "tape": "^4.6.3",
-    "xo": "^0.17.1"
+    "tape": "^4.6.3"
   },
   "dependencies": {
     "nlcst-to-string": "^2.0.0",
